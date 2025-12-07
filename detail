@@ -1,0 +1,59 @@
+from django.db import models
+
+import sqlite3
+
+# # connect DB
+con = sqlite3.connect("contact.db")
+cr = con.cursor()
+
+# # create table
+cr.execute("CREATE TABLE IF NOT EXISTS contacts (name TEXT, phone TEXT)")
+
+# # add contact
+def add():
+    n = input("Name: ")
+    p = input("Phone: ")
+    cr.execute("INSERT INTO contacts VALUES(?, ?)", (n, p))
+    con.commit()
+    print("Added")
+
+# view contacts
+def view():
+    cr.execute("SELECT * FROM contacts")
+    for i in cr.fetchall():
+        print(i)
+
+# search by name
+def search():
+    s = input("Search name: ")
+    cr.execute("SELECT * FROM contacts WHERE name=?", (s,))
+    print(cr.fetchall())
+
+# update phone
+def update():
+    n = input("Name to update: ")
+    p = input("New phone: ")
+    cr.execute("UPDATE contacts SET phone=? WHERE name=?", (p, n))
+    con.commit()
+    print("Updated")
+
+# delete contact
+def delete():
+    n = input("Name to delete: ")
+    cr.execute("DELETE FROM contacts WHERE name=?", (n,))
+    con.commit()
+    print("Deleted")
+
+# menu
+while True:
+    print("\n1.Add 2.View 3.Search 4.Update 5.Delete 6.Exit")
+    c = input("Choose: ")
+
+    if c=="1": add()
+    if c=="2": view()
+    if c=="3": search()
+    if c=="4": update()
+    if c=="5": delete()
+    if c=="6": break
+
+con.close()
